@@ -39,4 +39,11 @@ public class StockRepository {
     }
 
 
+    public void SaveStockChange(Stock stock, Long avg_price, Long stock_count){
+
+        stock.setStock_count(stock_count);
+        stock.setAverage_price(avg_price);
+
+    }
+
 }

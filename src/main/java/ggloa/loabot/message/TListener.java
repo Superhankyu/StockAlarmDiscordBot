@@ -59,7 +59,22 @@ public class TListener extends ListenerAdapter {
         else if(msg.getContentRaw().startsWith("!조회")){
             GetMyStocks(msg, channel, user, embed);
         }
+        else if(msg.getContentRaw().startsWith("!help")){
+            SendHelpMessage(msg, channel, embed);
+        }
 
+    }
+
+    public void SendHelpMessage(Message msg, MessageChannel channel, EmbedBuilder embed){
+        embed.setTitle("사용법");
+        String embedstr = "1. \"!주가 삼성전자\" 처럼 사용하면 해당 기업의 현재 주가를 알 수 있습니다\n\n " +
+                " 2. \"!등록 삼성전자 가격(평단가) 주식수 로 사용하기 \n\n" +
+                "ex) !등록 현대차 130000 200 -> 등록하고 나면 !조회 로 현재 수익을 확인할 수 있습니다\n\n" +
+                "3. !조회 -> 등록한 주식들에 대해 현재 수익률을 확인할 수 있습니다.\n\n";
+
+        embed.addField("", embedstr, false);
+
+        channel.sendMessageEmbeds(embed.build()).queue();
     }
 
     @Transactional
@@ -109,9 +124,12 @@ public class TListener extends ListenerAdapter {
                     else{
                         Member member = memberRepository.findById(id);
                         List<Stock> stocklist = member.getStockList();
-//                        for (Stock stock: stocklist){
-//                            if (stock.getCode() == code)
-//                        }
+                        for (Stock stock: stocklist){
+                            if (stock.getCode().equals(code.substring(1,code.length()-1))){
+                                stockRepository.SaveStockChange(stock, avgPrice, stock_count);
+                                return;
+                            }
+                        }
                         stockRepository.SaveStock(member, avgPrice, code.substring(1,code.length()-1), stock_count);
                     }
 
